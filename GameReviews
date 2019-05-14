@@ -1,0 +1,92 @@
+package racecondition;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class GameReviews
+{
+    private static class Genero
+    {
+        private int countAnalises;
+        private Map< String, Integer> frasesPontuacao = new HashMap<>();
+        private List< Double> scores = new ArrayList<>();
+        private Double maiorPontuacao = null;
+        private Double menorPontuacao = null;
+        private String melhorJogo = null;
+        private String piorJogo = null;
+    }
+
+    public static void main(String[] args) throws IOException
+    {
+        HashMap< String, Genero> map = new HashMap<>();
+
+        String caminhoArquivo = "C:\\Users\\ams\\Downloads\\game-reviews\\game-reviews.csv";
+
+        try
+        {
+            BufferedReader br = new BufferedReader(new FileReader(caminhoArquivo));
+
+            String linha = br.readLine();
+
+            while ((linha = br.readLine()) != null)
+            {
+                try
+                {
+                    String[] valores = linha.split(";");
+
+                    String jogo = valores[0]; //title
+                    String frasePontuacao = valores[2]; //score_phrase
+                    Double pontuacao = Double.parseDouble(valores[3]); //score
+                    String genero = valores[4]; //genre
+
+                    Genero resumo = map.get(genero);
+
+                    if (resumo == null)
+                    {
+                        resumo = new Genero();
+
+                        map.put(genero, resumo);
+                    }
+
+                    Integer countFrase = resumo.frasesPontuacao.get(frasePontuacao);
+
+                    if (countFrase == null)
+                    {
+                        countFrase = 0;
+                    }
+
+                    resumo.frasesPontuacao.put(frasePontuacao, countFrase + 1);
+
+                    resumo.countAnalises = resumo.countAnalises + 1;
+
+                    resumo.scores.add(pontuacao);
+
+                    if (resumo.maiorPontuacao == null || resumo.maiorPontuacao < pontuacao)
+                    {
+                        resumo.maiorPontuacao = pontuacao;
+                        resumo.melhorJogo = jogo;
+                    }
+
+                    if (resumo.menorPontuacao == null || resumo.menorPontuacao > pontuacao)
+                    {
+                        resumo.menorPontuacao = pontuacao;
+                        resumo.piorJogo = jogo;
+                    }
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+}
