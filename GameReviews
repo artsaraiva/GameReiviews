@@ -1,4 +1,3 @@
-package racecondition;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -10,8 +9,10 @@ import java.util.Map;
 
 public class GameReviews
 {
+
     private static class Genero
     {
+
         private int countAnalises;
         private Map< String, Integer> frasesPontuacao = new HashMap<>();
         private List< Double> scores = new ArrayList<>();
@@ -23,9 +24,10 @@ public class GameReviews
 
     public static void main(String[] args) throws IOException
     {
-        HashMap< String, Genero> map = new HashMap<>();
+        HashMap< String, Genero> genreMap = new HashMap<>();
+        HashMap< String, Integer> plataformMap = new HashMap<>();
 
-        String caminhoArquivo = "C:\\Users\\ams\\Downloads\\game-reviews\\game-reviews.csv";
+        String caminhoArquivo = "C:\\Users\\arthur.saraiva\\Desktop\\game-reviews.csv";
 
         try
         {
@@ -40,17 +42,30 @@ public class GameReviews
                     String[] valores = linha.split(";");
 
                     String jogo = valores[0]; //title
+                    String plataform = valores[1]; //score_phrase
                     String frasePontuacao = valores[2]; //score_phrase
                     Double pontuacao = Double.parseDouble(valores[3]); //score
                     String genero = valores[4]; //genre
 
-                    Genero resumo = map.get(genero);
+                    if (plataform.toLowerCase().contains("nintendo"))
+                    {
+                        Integer countGenero = plataformMap.get(genero);
+
+                        if (countGenero == null)
+                        {
+                            countGenero = 0;
+                        }
+
+                        plataformMap.put(genero, countGenero + 1);
+                    }
+
+                    Genero resumo = genreMap.get(genero);
 
                     if (resumo == null)
                     {
                         resumo = new Genero();
 
-                        map.put(genero, resumo);
+                        genreMap.put(genero, resumo);
                     }
 
                     Integer countFrase = resumo.frasesPontuacao.get(frasePontuacao);
@@ -88,7 +103,7 @@ public class GameReviews
         {
             e.printStackTrace();
         }
-        for (Map.Entry< String, Genero> entry : map.entrySet())
+        for (Map.Entry< String, Genero> entry : genreMap.entrySet())
         {
             try
             {
@@ -127,13 +142,28 @@ public class GameReviews
                 System.out.printf("Desvio padrão: %.2f\n", desvioPadrao);
                 System.out.println("Melhor jogo: " + resumo.melhorJogo);
                 System.out.println("Pior jogo: " + resumo.piorJogo);
-                
+
                 System.out.println("--------------------------------\n\n");
             }
             catch (Exception e)
             {
                 e.printStackTrace();
             }
-		}
-	}
+        }
+
+        String maxGeneroName = "";
+        Integer maxGeneroCount = 0;
+
+        for (Map.Entry< String, Integer> entry : plataformMap.entrySet())
+        {
+            System.out.println(entry.getValue());
+            if (entry.getValue() > maxGeneroCount)
+            {
+                maxGeneroName = entry.getKey();
+                maxGeneroCount = entry.getValue();
+            }
+        }
+
+        System.out.println("Gênero de jogo mais comum na família de consoles 'Nintendo': " + maxGeneroName + " com " + maxGeneroCount + " jogos.");
+    }
 }
