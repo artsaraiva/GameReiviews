@@ -88,5 +88,52 @@ public class GameReviews
         {
             e.printStackTrace();
         }
-    }
+        for (Map.Entry< String, Genero> entry : map.entrySet())
+        {
+            try
+            {
+                Genero resumo = entry.getValue();
+
+                double total = 0.0;
+                double media = 0.0;
+                double porcentagemAmazing = 0.0;
+                double desvioPadrao = 0.0;
+
+                if (resumo.frasesPontuacao.containsKey("Amazing"))
+                {
+                    int countAmazing = resumo.frasesPontuacao.get("Amazing");
+
+                    porcentagemAmazing = ((double) countAmazing / (double) resumo.countAnalises) * 100.0;
+                }
+
+                for (Double score : resumo.scores)
+                {
+                    total += score;
+                }
+
+                media = (double) total / (double) resumo.countAnalises;
+
+                for (Double score : resumo.scores)
+                {
+                    desvioPadrao += Math.pow(score - media, 2);
+                }
+
+                desvioPadrao = Math.sqrt(desvioPadrao / resumo.countAnalises);
+
+                System.out.println("Gênero: " + entry.getKey());
+                System.out.println("Número de reviews: " + resumo.countAnalises);
+                System.out.printf("Percentual de 'amazing': %.2f%%\n", porcentagemAmazing);
+                System.out.printf("Média dos scores: %.2f\n", media);
+                System.out.printf("Desvio padrão: %.2f\n", desvioPadrao);
+                System.out.println("Melhor jogo: " + resumo.melhorJogo);
+                System.out.println("Pior jogo: " + resumo.piorJogo);
+                
+                System.out.println("--------------------------------\n\n");
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+		}
+	}
 }
